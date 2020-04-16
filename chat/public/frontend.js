@@ -4,6 +4,19 @@ $(function () {
     var content = $('#content');
     var input = $('#input');
     var status = $('#status');
+    var activeUser = $('#activeusr')
+    var hideChat = $('#close')
+    var showChat = $('#show-chat-btn')
+
+  hideChat.click(function (params) {
+    $('#chat').hide();
+    $('#show-chat-btn').show();
+  })
+
+  showChat.click(function (params) {
+    $('#chat').show();
+    $('#show-chat-btn').show();
+  })
     // my color assigned by the server
     var myColor = false;
     // my name sent to the server
@@ -123,4 +136,20 @@ $(function () {
             ? '0' + dt.getMinutes() : dt.getMinutes())
           + ': ' + message + '</p>');
     }
+
+  var users = ["Vishwas", "Vikram", "Amit", "Vishwas", "Vikram", "Amit", "Vishwas", "Vikram", "Amit", "Vishwas", "Vikram", "Amit"]
+  users.forEach((user,i)=>{
+    addUser(user);
+  })
+    /**
+     * Add Active User to the right window
+     */
+    function addUser(user) {
+      
+      // activeUser.append('<p class="border-bottom"><span style="font-style: italic; color: grey">' + user + '</span><p>')
+      activeUser.append('<a href="#" class="list-group-item"><i class="fa fa-circle" aria-hidden="true" style="color:green; padding-right: 4px"></i><span style="font-style: italic; color: grey">'+user+'</span></a>')
+    }
+
+    
   });
+
