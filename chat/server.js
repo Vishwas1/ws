@@ -2,13 +2,10 @@ const http = require('http')
 const express = require('express')
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
-const ws = require('./ws')
 const cors = require('cors');
-const HypersignAuth = require('./HypersignAuth')
+const HypersignAuth = require('./hypersign-auth-js-sdk/HypersignAuth')
 
-const Wrapper = require('./test')
-
-const port = 4000
+const port = 4006
 const app = express()
 const server = http.createServer(app)
 
@@ -20,23 +17,17 @@ app.use(cookieParser());
 app.use(express.static('public'))
 
 
-
-
-ws(server)
-
-const mwrapper = new Wrapper();
-
-app.get('/demo', mwrapper.asyncMiddleWare, (req, res) => {
-    console.log(req.data)
-    res.send('Success')
-})
-
-const hypersign = new HypersignAuth({
-    jwtSecret: 'vErySecureSec8@#',
-    jwtExpiryTime: 240000, // in ms
+const options = {
+    jwtSecret: process.env.JWTSECRET || 'vErySecureSec8@#',
+    jwtExpiryTime: process.env.JWTEXPTIME || 240000, // in ms
     hsNodeUrl: 'http://localhost:5000',
-    hsAPIKey: 'XXX-XXXX-XXX',
-    hsAPISecret: 'XXX-XXXX-XXX'
+    hsAppId: 'XXX-XXXX-XXX',
+    hsAppSecret: 'XXX-XXXX-XXX'
+}
+const hypersign = new HypersignAuth({
+    server, // http server,
+    baseUrl: 'http://localhost:4006',
+    options
 });
 
 // Unprotected resource, may be to show login page
