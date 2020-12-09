@@ -6,6 +6,8 @@ const ws = require('./ws')
 const cors = require('cors');
 const HypersignAuth = require('./HypersignAuth')
 
+const Wrapper = require('./test')
+
 const port = 4000
 const app = express()
 const server = http.createServer(app)
@@ -16,11 +18,26 @@ app.use(bodyParser.json());
 app.use(cors());
 app.use(cookieParser());
 app.use(express.static('public'))
+
+
+
+
 ws(server)
 
+const mwrapper = new Wrapper();
 
+app.get('/demo', mwrapper.asyncMiddleWare, (req, res) => {
+    console.log(req.data)
+    res.send('Success')
+})
 
-const hypersign = new HypersignAuth();
+const hypersign = new HypersignAuth({
+    jwtSecret: 'vErySecureSec8@#',
+    jwtExpiryTime: 240000, // in ms
+    hsNodeUrl: 'http://localhost:5000',
+    hsAPIKey: 'XXX-XXXX-XXX',
+    hsAPISecret: 'XXX-XXXX-XXX'
+});
 
 // Unprotected resource, may be to show login page
 app.get('/', function(req, res) {
@@ -28,7 +45,7 @@ app.get('/', function(req, res) {
 });
 
 // Implement /auth API: 
-app.post('/hs/api/v2/auth', hypersign.authenticate, (req, res) => {
+app.post('/hs/api/v2/auth', hypersign.authenticate.bind(hypersign), (req, res) => {
     try {
         const user = req.body.hsUserData;
         // Do something with the user data.
@@ -41,7 +58,7 @@ app.post('/hs/api/v2/auth', hypersign.authenticate, (req, res) => {
 
 // Protected resource
 // Must pass hs_authorizationToken in x-auth-token header
-app.get('/protected', hypersign.authorize, (req, res) => {
+app.get('/protected', hypersign.authorize.bind(hypersign), (req, res) => {
     try {
         const user = req.body.userData;
         // Do whatever you want to do with it
