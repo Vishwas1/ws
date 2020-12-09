@@ -19,7 +19,7 @@ module.exports = (server) => {
         const connection = request.accept(null, request.origin)
         console.log(`${TIME()} Client connected`)
         const clientId = clientStore.addClient(connection);
-        connection.sendUTF(getFormatedMessage('init', 'http://localhost:4000/auth?challenge=' + clientId))
+        connection.sendUTF(getFormatedMessage('init', 'http://localhost:4000/hs/api/v2/auth?challenge=' + clientId))
         connection.on('message', (m) => {})
         connection.on('close', (conn) => {
             console.log(`${TIME()} disconnected`)
