@@ -4,7 +4,7 @@ const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 const ws = require('./ws')
 const cors = require('cors');
-const hypersign = require('./hsMiddleware')
+const HypersignAuth = require('./HypersignAuth')
 
 const port = 4000
 const app = express()
@@ -16,8 +16,11 @@ app.use(bodyParser.json());
 app.use(cors());
 app.use(cookieParser());
 app.use(express.static('public'))
-
 ws(server)
+
+
+
+const hypersign = new HypersignAuth();
 
 // Unprotected resource, may be to show login page
 app.get('/', function(req, res) {
